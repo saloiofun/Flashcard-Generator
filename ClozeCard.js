@@ -11,27 +11,30 @@ Use prototypes to attach these methods, wherever possible.
 var fs = require("fs");
 
 var ClozeCard = function (text, cloze) {
+    if (!(this instanceof ClozeCard)) {
+        return new ClozeCard(text, cloze);
+    }
+
+    if (!text.includes(cloze)) {
+        var errorText = "\r\n>>> \"" + cloze + "\" does not appear in \"" + text + "\"\r\n";
+        fs.appendFile("log.txt", errorText, function (err) {
+            if (err) {
+                return console.log(err);
+            }
+            console.log(errorText);
+        });
+    }
+
     this.text = text;
     this.cloze = cloze;
-    this.logError = function () {
-        if (!text.includes(cloze)) {
-            var errorText = ">>> \"" + cloze + "\" does not appear in \"" + text + "\"\r\n";
-            fs.appendFile("log.txt", this.command, function (err) {
-                if (err) {
-                    return console.log(err);
-                }
-                console.log(errorText);
-            });
-        }
-    };
-};
-
-ClozeCard.prototype.cloze = function () {
-    return this.cloze;
 };
 
 ClozeCard.prototype.partial = function () {
-    return this.text.replace(this.cloze, " ... ");
+    if (this.text.includes(this.cloze)) {
+        return this.text.replace(this.cloze, "...");
+    } else {
+        return "\nSorry, cloze word \"" + this.cloze + "\" does not appear in \"" + this.text + "\"";
+    }
 };
 
 ClozeCard.prototype.fullText = function () {

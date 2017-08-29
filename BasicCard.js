@@ -7,6 +7,9 @@ The constructed object should have a back property that contains the text on the
 */
 
 var BasicCard = function (front, back) {
+    if (!(this instanceof BasicCard)) {
+        return new BasicCard(front, back);
+    }
     this.front = front;
     this.back = back;
 };
